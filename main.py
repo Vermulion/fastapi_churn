@@ -1,22 +1,13 @@
+from __future__ import annotations
+
+from typing import Any
 from fastapi import FastAPI
-from pydantic import BaseModel
 
-app = FastAPI()
+from schemas import FeatureVectorChurn, DatasetRowChurn
+from dataset import ChurnDataset
 
-class FeatureVectorChurn(BaseModel):
-
-    monthly_fee: float
-    usage_hours: float
-    support_requests: int
-    account_age_months: int
-    failed_payments: int
-    region: str
-    device_type: str
-    payment_method: str
-    autopay_enabled: int
-
-class DatasetRowChurn(FeatureVectorChurn):
-    churn: int
+app = FastAPI() 
+dataset = ChurnDataset()
 
 @app.get("/")
 def ml_churn_service_health_check():
@@ -25,3 +16,11 @@ def ml_churn_service_health_check():
 @app.post("/predict")
 def predict(features: FeatureVectorChurn) -> DatasetRowChurn:
     return features
+
+@app.get("/dataset/preview")
+def dataset_preview(top: int = 5) -> list[DatasetRowChurn]:
+    return dataset.rows[:top]
+
+@app.get("/dataset/info")
+def dataset_info() -> dict[str, Any]:
+    return dataset.info()
