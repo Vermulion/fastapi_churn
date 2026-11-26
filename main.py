@@ -24,3 +24,7 @@ def dataset_preview(top: int = 5) -> list[DatasetRowChurn]:
 @app.get("/dataset/info")
 def dataset_info() -> dict[str, Any]:
     return dataset.info()
+
+@app.get("/dataset/split-info")
+def dataset_split_info() -> dict[str, Any]:
+    return dataset.split_info()
